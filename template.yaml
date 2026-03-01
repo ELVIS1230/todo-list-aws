@@ -2,9 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Todo List API - AWS SAM
 
-# -------------------------------------------------
-# PARAMETERS
-# -------------------------------------------------
 Parameters:
   Stage:
     Type: String
@@ -14,38 +11,25 @@ Parameters:
       - staging
       - production
 
-# -------------------------------------------------
-# GLOBAL CONFIG (aplica a TODAS las lambdas)
-# -------------------------------------------------
 Globals:
   Function:
     Runtime: python3.12
     Timeout: 10
-    MemorySize: 128
-    Architectures:
-      - x86_64
     Environment:
       Variables:
         STAGE: !Ref Stage
         TABLE_NAME: !Sub "todo-list-${Stage}"
 
-# -------------------------------------------------
-# RESOURCES
-# -------------------------------------------------
 Resources:
 
-  # ---------- API GATEWAY ----------
+  # API
   ServerlessApi:
     Type: AWS::Serverless::Api
     Properties:
       Name: !Sub "todo-list-api-${Stage}"
       StageName: !Ref Stage
-      Cors:
-        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
-        AllowHeaders: "'*'"
-        AllowOrigin: "'*'"
 
-  # ---------- DYNAMODB ----------
+  # DynamoDB
   TodosTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -58,15 +42,13 @@ Resources:
         - AttributeName: id
           KeyType: HASH
 
-  # ---------- CREATE ----------
+  # CREATE
   CreateTodoFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
-      Handler: create_todo.handler
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TodosTable
+      Handler: create.create
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
       Events:
         CreateTodo:
           Type: Api
@@ -75,15 +57,13 @@ Resources:
             Path: /todos
             Method: POST
 
-  # ---------- LIST ----------
+  # LIST
   ListTodosFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
-      Handler: list_todos.handler
-      Policies:
-        - DynamoDBReadPolicy:
-            TableName: !Ref TodosTable
+      Handler: list.list
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
       Events:
         ListTodos:
           Type: Api
@@ -92,15 +72,13 @@ Resources:
             Path: /todos
             Method: GET
 
-  # ---------- GET ----------
+  # GET
   GetTodoFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
-      Handler: get_todo.handler
-      Policies:
-        - DynamoDBReadPolicy:
-            TableName: !Ref TodosTable
+      Handler: get.get
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
       Events:
         GetTodo:
           Type: Api
@@ -109,15 +87,13 @@ Resources:
             Path: /todos/{id}
             Method: GET
 
-  # ---------- UPDATE ----------
+  # UPDATE
   UpdateTodoFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
-      Handler: update_todo.handler
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TodosTable
+      Handler: update.update
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
       Events:
         UpdateTodo:
           Type: Api
@@ -126,15 +102,13 @@ Resources:
             Path: /todos/{id}
             Method: PUT
 
-  # ---------- DELETE ----------
+  # DELETE
   DeleteTodoFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
-      Handler: delete_todo.handler
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TodosTable
+      Handler: delete.delete
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
       Events:
         DeleteTodo:
           Type: Api
@@ -143,15 +117,6 @@ Resources:
             Path: /todos/{id}
             Method: DELETE
 
-# -------------------------------------------------
-# OUTPUTS
-# -------------------------------------------------
 Outputs:
-
   ApiUrl:
-    Description: API Gateway endpoint URL
     Value: !Sub "https://${ServerlessApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
-
-  TodosTableName:
-    Description: DynamoDB table name
-    Value: !Ref TodosTable
