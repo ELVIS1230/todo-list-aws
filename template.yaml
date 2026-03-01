@@ -41,6 +41,7 @@ Resources:
         Create:
           Type: Api
           Properties:
+            RestApiId: !Ref ServerlessApi
             Path: /todos
             Method: post
   ListTodosFunction:
@@ -57,6 +58,7 @@ Resources:
         Create:
           Type: Api
           Properties:
+            RestApiId: !Ref ServerlessApi
             Path: /todos
             Method: get
   GetTodoFunction:
@@ -73,6 +75,7 @@ Resources:
         Create:
           Type: Api
           Properties:
+            RestApiId: !Ref ServerlessApi
             Path: /todos/{id}
             Method: get
   UpdateTodoFunction:
@@ -89,6 +92,7 @@ Resources:
         Create:
           Type: Api
           Properties:
+            RestApiId: !Ref ServerlessApi
             Path: /todos/{id}
             Method: put
   DeleteTodoFunction:
@@ -105,6 +109,7 @@ Resources:
         Create:
           Type: Api
           Properties:
+            RestApiId: !Ref ServerlessApi
             Path: /todos/{id}
             Method: delete
             
