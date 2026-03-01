@@ -31,7 +31,10 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: src/
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      # Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
       Handler: create.create
       Runtime: python3.12
       Events:
@@ -44,7 +47,10 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: src/
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      # Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
       Handler: list.list
       Runtime: python3.12
       Events:
@@ -57,7 +63,10 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: src/
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      # Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
       Handler: get.get
       Runtime: python3.12
       Events:
@@ -70,7 +79,10 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: src/
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      # Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
       Handler: update.update
       Runtime: python3.12
       Events:
@@ -83,7 +95,10 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: src/
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      # Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
       Handler: delete.delete
       Runtime: python3.12
       Events:
