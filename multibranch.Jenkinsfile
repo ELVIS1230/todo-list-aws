@@ -186,6 +186,9 @@ pipeline {
         }
         
         stage('********PROMOTE (MERGE MASTER)*******') {
+          when {
+            branch 'develop'
+          }
             steps {
                 echo "🚀 Promoviendo versión a Release..."
                   withCredentials([usernamePassword(
