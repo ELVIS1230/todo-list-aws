@@ -131,6 +131,20 @@ pipeline {
                  junit 'result_unit.xml'
             }
         }
+        stage('==========>PROMOTE (MERGE MASTER)<===========') {
+            steps {
+                echo "🚀 Promoviendo versión a Release..."
+                withCredentials([usernamePassword(credentialsId: 'GITHUB1.4', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                  sh '''
+                    git fetch origin
+                    git checkout master
+                    git pull origin master
+                    git merge origin/develop
+                    git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/todo-list-aws.git master
+                  '''
+                }
+            }
+        }
     }
     post {
         always {
