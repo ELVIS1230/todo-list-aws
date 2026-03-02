@@ -4,7 +4,7 @@ pipeline {
         STACK_NAME = "todo-list-aws-production"
     }
     stages { 
-        stage('Checkout Code') { 
+        stage('GET CODE') { 
             steps { 
               git(
                 branch: 'master',
@@ -13,7 +13,7 @@ pipeline {
               )
             } 
         }
-        stage('====>Download configuration<====') {
+        stage('SAM CONFIG') {
           steps {
             echo "📥 Reemplazando configuración local..."
 
@@ -31,7 +31,7 @@ pipeline {
             sh "cat samconfig.toml"
         }
         }
-        stage('Deploy') {
+        stage('DEPLOY') {
            steps {
                 script{
                     sh """
@@ -83,7 +83,7 @@ pipeline {
         }
     }
         }
-        stage('API Tests (pytest) - Read Only') {
+        stage('REST TEST') {
             environment {
                 BASE_URL = "${env.BASE_URL}"
             }
