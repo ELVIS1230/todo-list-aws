@@ -55,8 +55,9 @@ pipeline {
             sh "cat samconfig.toml"
         }
         }
-        stage('Tests'){
+        stage('STATIC TEST'){
             steps {
+                echo "EJECUTANDO ANALISIS ESTATICO EN SRC/"
                 catchError(
                     buildResult: 'UNSTABLE',
                     stageResult: 'FAILURE'
@@ -75,14 +76,11 @@ pipeline {
                         ]
                     )
                 }
-            }
-        }
-        stage('Security') {
-            steps {
+
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){ 
-                sh '''
-                    bandit -r src -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"
-                '''
+                    sh '''
+                        bandit -r src -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"
+                    '''
                     recordIssues(
                         qualityGates: [
                             [criticality: 'NOTE', integerThreshold: 2, type: 'TOTAL'],
@@ -94,7 +92,7 @@ pipeline {
                 }
             }
         }
-        stage('SAM deploy') {
+        stage('DEPLOY') {
            steps {
                 script{
                     sh '''
@@ -168,7 +166,7 @@ pipeline {
         }
     }
         }
-        stage('API Tests (pytest)') {
+        stage('REST TEST') {
            when {
           branch 'develop'
         }
@@ -188,7 +186,7 @@ pipeline {
             }
         }
 
-        stage('API Tests (pytest) - Read Only') {
+        stage('REST TEST - Read Only') {
           when {
         branch 'master'   // ⚠️ Solo promover desde develop
     }
