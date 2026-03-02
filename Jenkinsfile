@@ -12,7 +12,25 @@ pipeline {
                 credentialsId: 'GITHUB1.4'
               )
             } 
-        } 
+        }
+        stage('====>Download configuration<====') {
+          steps {
+            echo "📥 Reemplazando configuración local..."
+
+            sh '''
+                CONFIG_URL="https://raw.githubusercontent.com/ELVIS1230/todo-list-aws-config/${DEPLOY_ENV}/samconfig.toml"
+
+                # eliminar config del repo app (si existe)
+                rm -f samconfig.toml
+
+                # descargar config del repo de configuración
+                curl -f -L $CONFIG_URL -o samconfig.toml
+            '''
+
+            echo "✅ Configuración FINAL usada por SAM:"
+            sh "cat samconfig.toml"
+        }
+        }
         stage('Tests'){
             steps {
                 catchError(
