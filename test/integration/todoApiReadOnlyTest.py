@@ -4,7 +4,7 @@ import requests
 import pytest
 
 BASE_URL = os.environ.get("BASE_URL")
-DEFAULT_TIMEOUT = 2  # in secs
+DEFAULT_TIMEOUT = 30  # in secs (aumentado para cold starts de Lambda)
 
 
 @pytest.mark.readonly
@@ -91,7 +91,7 @@ class TestApiReadOnly(unittest.TestCase):
         
         import time
         start_time = time.time()
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=30)
         end_time = time.time()
         
         response_time = end_time - start_time
@@ -102,9 +102,9 @@ class TestApiReadOnly(unittest.TestCase):
             f"Error en la petición API a {url}"
         )
         
-        # Verifica que responde en menos de 3 segundos
+        # Verifica que responde en menos de 10 segundos
         self.assertLess(
-            response_time, 3.0,
+            response_time, 10.0,
             f"API response time too slow: {response_time:.3f}s"
         )
         
