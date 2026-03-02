@@ -34,7 +34,7 @@ pipeline {
             sh "cat samconfig.toml"
         }
         }
-         stage('Download configuration (PRODUCTION)') {
+         stage('SAM CONFIG PRODUCTION') {
           when {
             branch 'master'
           }
