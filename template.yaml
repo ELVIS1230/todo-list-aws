@@ -18,7 +18,10 @@ Globals:
     Environment:
       Variables:
         STAGE: !Ref Stage
-        TABLE_NAME: !Sub "todo-list-${Stage}"
+        # TABLE_NAME: !Sub "todo-list-${Stage}"
+        DYNAMODB_TABLE: !Ref TodosDynamoDbTable
+        # DYNAMODB_TABLE: !Ref TodosDynamoDbTable
+        ENDPOINT_OVERRIDE: ""
 
 Resources:
 
