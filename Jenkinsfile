@@ -13,7 +13,7 @@ pipeline {
               )
             } 
         }
-        stage('====>Download configuration<====') {
+        stage('SAM CONFIG') {
           steps {
             echo "📥 Reemplazando configuración local..."
 
