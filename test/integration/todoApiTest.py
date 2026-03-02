@@ -41,6 +41,7 @@ class TestApi(unittest.TestCase):
         )
         #List
         url = BASE_URL+"/todos"
+        print('URL BASE: ' + url)
         response = requests.get(url)
         print('Response List Todo:' + str(response.json()))
         self.assertEqual(
@@ -69,6 +70,7 @@ class TestApi(unittest.TestCase):
             jsonbody['text'], "Integration text example", "Error en la petición API a {url}"
         )
         url = url+"/"+ID_TODO
+        print('URL BASE: ' + url)
         response = requests.delete(url)
         self.assertEqual(
             response.status_code, 200, "Error en la petición API a {url}"
@@ -79,6 +81,7 @@ class TestApi(unittest.TestCase):
         print('Starting - integration test Get TODO')
         #Add TODO
         url = BASE_URL+"/todos"
+        print('URL BASE: ' + url)
         data = {
          "text": "Integration text example - GET"
         }
@@ -96,6 +99,7 @@ class TestApi(unittest.TestCase):
         )
         #Test GET TODO
         url = BASE_URL+"/todos/"+ID_TODO
+        print('URL BASE: ' + url)
         response = requests.get(url)
         json_response = response.json()
         print('Response Get Todo: '+ str(json_response))
@@ -134,6 +138,7 @@ class TestApi(unittest.TestCase):
         )
         #Update TODO
         url = BASE_URL+"/todos/" + ID_TODO
+        print('URL BASE: ' + url)
         data = {
          "text": "Integration text example - Modified",
          "checked": "true"
@@ -150,6 +155,7 @@ class TestApi(unittest.TestCase):
         )
         #Test GET TODO
         url = BASE_URL+"/todos/"+ID_TODO
+        print('URL BASE: ' + url)
         response = requests.get(url)
         json_response = response.json()
         print('Response Get Todo: '+ str(json_response))
@@ -170,6 +176,7 @@ class TestApi(unittest.TestCase):
         print('Starting - integration test Delete TODO')
         #Add TODO
         url = BASE_URL+"/todos"
+        print('URL BASE: ' + url)
         data = {
          "text": "Integration text example - Initial"
         }
