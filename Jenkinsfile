@@ -137,7 +137,7 @@ pipeline {
         stage('==========>PROMOTE (MERGE MASTER)<===========') {
             steps {
                 echo "🚀 Promoviendo versión a Release..."
-                withCredentials([usernamePassword(credentialsId: 'case1.4', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                // withCredentials([usernamePassword(credentialsId: 'case1.4', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                   sh '''
                     git fetch origin
                     git checkout master
