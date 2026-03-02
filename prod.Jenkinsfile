@@ -4,7 +4,7 @@ pipeline {
         STACK_NAME = "todo-list-aws-production"
     }
     stages { 
-       stage('Checkout Code') { 
+        stage('Checkout Code') { 
             steps { 
               git(
                 branch: 'master',
@@ -12,7 +12,7 @@ pipeline {
                 credentialsId: 'GITHUB1.4'
               )
             } 
-       }
+        } 
         stage('Deploy') {
            steps {
                 script{
