@@ -10,11 +10,11 @@ pipeline {
         //       )
         //     } 
         // } 
-        stage('Build') { 
-            steps { 
-                sh 'ls -la'
-            }    
-        } 
+        // stage('Build') { 
+        //     steps { 
+        //         sh 'ls -la'
+        //     }    
+        // } 
         stage('Tests'){
             steps {
                 catchError(
