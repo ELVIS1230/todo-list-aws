@@ -1,20 +1,36 @@
 pipeline { 
     agent any 
+    environment {
+        STACK_NAME = "todo-list-aws-staging"
+    }
     stages { 
-        // stage('Checkout Code') { 
-        //     steps { 
-        //       git(
-        //         branch: 'develop',
-        //         url: 'https://github.com/ELVIS1230/todo-list-aws.git',
-        //         credentialsId: 'GITHUB1.4'
-        //       )
-        //     } 
-        // } 
-        stage('Build') { 
+        stage('Checkout Code') { 
             steps { 
-                sh 'ls -la'
-            }    
-        } 
+              git(
+                branch: 'develop',
+                url: 'https://github.com/ELVIS1230/todo-list-aws.git',
+                credentialsId: 'GITHUB1.4'
+              )
+            } 
+        }
+        stage('====>Download configuration<====') {
+          steps {
+            echo "📥 Reemplazando configuración local..."
+
+            sh '''
+                CONFIG_URL="https://raw.githubusercontent.com/ELVIS1230/todo-list-aws-config/staging/samconfig.toml"
+
+                # eliminar config del repo app (si existe)
+                rm -f samconfig.toml
+
+                # descargar config del repo de configuración
+                curl -f -L $CONFIG_URL -o samconfig.toml
+            '''
+
+            echo "✅ Configuración FINAL usada por SAM:"
+            sh "cat samconfig.toml"
+        }
+        }
         stage('Tests'){
             steps {
                 catchError(
@@ -59,7 +75,6 @@ pipeline {
                 script{
                     sh '''
                         set -e
-                            STACK_NAME="todo-list-aws-staging"
                             REGION="us-east-1"
                         echo "===== AWS Identity ====="
                         aws sts get-caller-identity
@@ -106,7 +121,7 @@ pipeline {
         env.BASE_URL = sh(
                 script: '''
                     aws cloudformation describe-stacks \
-                      --stack-name todo-list-aws-staging \
+                                            --stack-name $STACK_NAME \
                       --region us-east-1 \
                       --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" \
                       --output text
@@ -134,7 +149,8 @@ pipeline {
                  junit 'result_unit.xml'
             }
         }
-        stage('PROMOTE (MERGE MASTER)--->') {
+        
+        stage('********PROMOTE (MERGE MASTER)*******') {
             steps {
                 echo "🚀 Promoviendo versión a Release..."
                   withCredentials([usernamePassword(
@@ -143,13 +159,13 @@ pipeline {
                       passwordVariable: 'GITHUB_TOKEN'
                   )]) {
                   sh '''
-                    git remote set-url origin https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/todo-list-aws.git
+                    
 
                     git fetch origin
                     git checkout master
                     git pull origin master
                     git merge origin/develop
-                    git push origin master
+                    git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/todo-list-aws.git master
                   '''
                 }
             }
