@@ -120,6 +120,7 @@ pipeline {
                  junit 'result_unit.xml'
             }
         }
+        
         stage('********PROMOTE (MERGE MASTER)*******') {
             steps {
                 echo "🚀 Promoviendo versión a Release..."
