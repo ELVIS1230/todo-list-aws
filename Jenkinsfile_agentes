@@ -16,6 +16,7 @@ pipeline {
         stage('STATIC TEST'){
           agent { label 'static-agent' }
           steps {
+            sh 'whoami && hostname'
             echo "EJECUTANDO ANALISIS ESTATICO EN SRC/"
             catchError(
                 buildResult: 'UNSTABLE',
@@ -54,6 +55,7 @@ pipeline {
         }
         stage('DEPLOY') {
            steps {
+            sh 'whoami && hostname'
                 script{
                     sh '''
                         set -e
@@ -123,6 +125,7 @@ pipeline {
                 BASE_URL = "${env.BASE_URL}"
             }
             steps{
+              sh 'whoami && hostname'
                 unstash "api-env"
                 sh '''
                     python3 -m venv .venv
