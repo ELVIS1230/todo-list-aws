@@ -110,6 +110,9 @@ pipeline {
                   returnStdout: true
               ).trim()
               echo "BASE_URL = ${env.BASE_URL}"
+              writeFile file: "env_vars.txt", text: """
+                      BASE_URL=${baseUrlOutput}
+                    """
               stash name: "api-env", includes: "env_vars.txt"
           }
         }
