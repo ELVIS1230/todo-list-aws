@@ -3,16 +3,11 @@ pipeline {
     stages { 
         stage('Checkout Code') { 
             steps { 
-              withCredentials([
-                  usernamePassword(
-                    credentialsId: 'GITHUB1.4',
-                    usernameVariable: 'GITHUB_USER',
-                    passwordVariable: 'GITHUB_TOKEN'
-                  )
-              ]) {
-                git branch: 'develop',
-                url: 'https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/todo-list-aws.git'
-              }
+              git(
+                branch: 'develop',
+                url: 'https://github.com/ELVIS1230/todo-list-aws.git',
+                credentialsId: 'GITHUB1.4'
+              )
             } 
         } 
         stage('Build') { 
@@ -142,7 +137,7 @@ pipeline {
         stage('==========>PROMOTE (MERGE MASTER)<===========') {
             steps {
                 echo "🚀 Promoviendo versión a Release..."
-                
+                withCredentials([usernamePassword(credentialsId: 'case1.4', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                   sh '''
                     git fetch origin
                     git checkout master
@@ -150,6 +145,7 @@ pipeline {
                     git merge origin/develop
                     git push origin/master
                   '''
+                }
             }
         }
     }
