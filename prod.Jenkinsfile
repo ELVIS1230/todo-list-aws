@@ -4,15 +4,15 @@ pipeline {
         STACK_NAME = "todo-list-aws-production"
     }
     stages { 
-        stage('Checkout Code') { 
-            steps { 
-              git(
-                branch: 'master',
-                url: 'https://github.com/ELVIS1230/todo-list-aws.git',
-                credentialsId: 'GITHUB1.4'
-              )
-            } 
-        } 
+        // stage('Checkout Code') { 
+        //     steps { 
+        //       git(
+        //         branch: 'develop',
+        //         url: 'https://github.com/ELVIS1230/todo-list-aws.git',
+        //         credentialsId: 'GITHUB1.4'
+        //       )
+        //     } 
+        // } 
         stage('Build') { 
             steps { 
                 sh 'ls -la'
