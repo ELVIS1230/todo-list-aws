@@ -170,7 +170,7 @@ pipeline {
         }
         stage('API Tests (pytest)') {
            when {
-          branch 'develo'
+          branch 'develop'
         }
             environment {
                 BASE_URL = "${env.BASE_URL}"
