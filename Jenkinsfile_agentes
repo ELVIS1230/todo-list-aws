@@ -1,5 +1,5 @@
 pipeline { 
-    agent any 
+    agent any
     environment {
         STACK_NAME = "todo-list-aws-staging"
     }
@@ -13,44 +13,44 @@ pipeline {
               )
             } 
         } 
-        stage('Tests'){
-            steps {
-                catchError(
-                    buildResult: 'UNSTABLE',
-                    stageResult: 'FAILURE'
-                ) {
-                    sh ''' 
-                        export PYTHONPATH=.
-                        flake8 --exit-zero --format=pylint src > flake8.out
-                    ''' 
-                    recordIssues(
-                        qualityGates: [
-                            [criticality: 'NOTE', integerThreshold: 8, threshold: 8.0, type: 'TOTAL'],
-                            [criticality: 'ERROR', integerThreshold: 10, threshold: 10.0, type: 'TOTAL']
-                        ],
-                        tools:[
-                            flake8(pattern: 'flake8.out')
-                        ]
-                    )
-                }
-            }
-        }
-        stage('Security') {
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){ 
+        stage('STATIC TEST'){
+          agent { label 'static-agent' }
+          steps {
+            echo "EJECUTANDO ANALISIS ESTATICO EN SRC/"
+            catchError(
+                buildResult: 'UNSTABLE',
+                stageResult: 'FAILURE'
+            ) {
                 sh '''
-                    bandit -r src -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"
+                  export PYTHONPATH=.
+                  flake8 --exit-zero --format=pylint src > flake8.out
                 '''
-                    recordIssues(
-                        qualityGates: [
-                            [criticality: 'NOTE', integerThreshold: 2, type: 'TOTAL'],
-                            [criticality: 'FAILURE', integerThreshold: 4, type: 'TOTAL'] ],
-                        tools:[
-                            pyLint(pattern: 'bandit.out')
-                        ]
-                    )
-                }
+                recordIssues(
+                    qualityGates: [
+                        [criticality: 'NOTE', integerThreshold: 8, threshold: 8.0, type: 'TOTAL'],
+                        [criticality: 'ERROR', integerThreshold: 10, threshold: 10.0, type: 'TOTAL']
+                    ],
+                    tools:[
+                        flake8(pattern: 'flake8.out')
+                    ]
+                )
             }
+
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                sh '''
+                  bandit -r src -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"
+                '''
+                recordIssues(
+                    qualityGates: [
+                        [criticality: 'NOTE', integerThreshold: 2, type: 'TOTAL'],
+                        [criticality: 'FAILURE', integerThreshold: 4, type: 'TOTAL']
+                    ],
+                    tools:[
+                        pyLint(pattern: 'bandit.out')
+                    ]
+                )
+            }
+          }
         }
         stage('SAM deploy') {
            steps {
@@ -98,28 +98,29 @@ pipeline {
 
                                     echo "===== SAM Deploy ====="
                         sam deploy --config-env staging --no-fail-on-empty-changeset
-        '''
-        
-        env.BASE_URL = sh(
-                script: '''
-                    aws cloudformation describe-stacks \
-                                            --stack-name $STACK_NAME \
-                      --region us-east-1 \
-                      --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" \
-                      --output text
-                ''',
-                returnStdout: true
-            ).trim()
-
-            echo "BASE_URL = ${env.BASE_URL}"
+          '''
+          env.BASE_URL = sh(
+                  script: '''
+                      aws cloudformation describe-stacks \
+                                                --stack-name $STACK_NAME \
+                        --region us-east-1 \
+                        --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" \
+                        --output text
+                  ''',
+                  returnStdout: true
+              ).trim()
+              echo "BASE_URL = ${env.BASE_URL}"
+              stash name: "api-env", includes: "env_vars.txt"
+          }
         }
-    }
         }
         stage('API Tests (pytest)') {
+          agent { label 'rest-agent' }
             environment {
                 BASE_URL = "${env.BASE_URL}"
             }
             steps{
+                unstash "api-env"
                 sh '''
                     python3 -m venv .venv
                     . .venv/bin/activate
