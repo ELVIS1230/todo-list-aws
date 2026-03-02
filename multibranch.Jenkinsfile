@@ -186,28 +186,32 @@ pipeline {
         }
         
         stage('********PROMOTE (MERGE MASTER)*******') {
-          when {
-            branch 'develop'
-          }
-            steps {
-                echo "🚀 Promoviendo versión a Release..."
-                  withCredentials([usernamePassword(
-                      credentialsId: 'GITHUB1.4',
-                      usernameVariable: 'GITHUB_USER',
-                      passwordVariable: 'GITHUB_TOKEN'
-                  )]) {
-                  sh '''
-                    
+    when {
+        branch 'develop'   // ⚠️ Solo promover desde develop
+    }
+    steps {
+        echo "🚀 Promoviendo versión a Release..."
+        withCredentials([usernamePassword(
+            credentialsId: 'GITHUB1.4',
+            usernameVariable: 'GITHUB_USER',
+            passwordVariable: 'GITHUB_TOKEN'
+        )]) {
+            sh '''
+                set -e
 
-                    git fetch origin
-                    git checkout master
-                    git pull origin master
-                    git merge origin/develop
-                    git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/todo-list-aws.git master
-                  '''
-                }
-            }
+                git fetch origin master
+
+                # Crear rama local master basada en origin/master
+                git checkout -B master origin/master
+
+                # Merge develop dentro de master
+                git merge origin/develop --no-edit
+
+                git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/todo-list-aws.git master
+            '''
         }
+    }
+}
     }
     post {
         always {
