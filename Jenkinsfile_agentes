@@ -4,7 +4,7 @@ pipeline {
         STACK_NAME = "todo-list-aws-staging"
     }
     stages { 
-        stage('Checkout Code') { 
+        stage('GET CODE') { 
             steps { 
               git(
                 branch: 'develop',
@@ -52,7 +52,7 @@ pipeline {
             }
           }
         }
-        stage('SAM deploy') {
+        stage('DEPLOY') {
            steps {
                 script{
                     sh '''
@@ -117,7 +117,7 @@ pipeline {
           }
         }
         }
-        stage('API Tests (pytest)') {
+        stage('REST TEST') {
           agent { label 'rest-agent' }
             environment {
                 BASE_URL = "${env.BASE_URL}"
@@ -136,7 +136,7 @@ pipeline {
             }
         }
         
-        stage('********PROMOTE (MERGE MASTER)*******') {
+        stage('PROMOTE') {
             steps {
                 echo "🚀 Promoviendo versión a Release..."
                   withCredentials([usernamePassword(
