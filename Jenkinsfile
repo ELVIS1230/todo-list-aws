@@ -1,20 +1,6 @@
 pipeline { 
     agent any 
     stages { 
-        // stage('Checkout Code') { 
-        //     steps { 
-        //       git(
-        //         branch: 'develop',
-        //         url: 'https://github.com/ELVIS1230/todo-list-aws.git',
-        //         credentialsId: 'GITHUB1.4'
-        //       )
-        //     } 
-        // } 
-        // stage('Build') { 
-        //     steps { 
-        //         sh 'ls -la'
-        //     }    
-        // } 
         stage('Tests'){
             steps {
                 catchError(
@@ -143,13 +129,13 @@ pipeline {
                       passwordVariable: 'GITHUB_TOKEN'
                   )]) {
                   sh '''
-                    git remote set-url origin https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/todo-list-aws.git
+                    
 
                     git fetch origin
                     git checkout master
                     git pull origin master
                     git merge origin/develop
-                    git push origin master
+                    git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/todo-list-aws.git master
                   '''
                 }
             }
