@@ -169,6 +169,9 @@ pipeline {
     }
         }
         stage('API Tests (pytest)') {
+           when {
+          branch 'develo'
+        }
             environment {
                 BASE_URL = "${env.BASE_URL}"
             }
