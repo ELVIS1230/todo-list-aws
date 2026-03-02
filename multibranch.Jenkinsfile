@@ -13,7 +13,7 @@ pipeline {
               )
             } 
         }
-        stage('====>Download configuration<====') {
+        stage('SAM CONFIG') {
           when {
             branch 'develop'
           }
@@ -34,7 +34,7 @@ pipeline {
             sh "cat samconfig.toml"
         }
         }
-         stage('====>Download configuration (PRODUCTION)<====') {
+         stage('Download configuration (PRODUCTION)') {
           when {
             branch 'master'
           }
@@ -209,7 +209,8 @@ pipeline {
             }
         }
         
-        stage('********PROMOTE (MERGE MASTER)*******') {
+        stage('PROMOTE') {
+           when {
     when {
         branch 'develop'   // ⚠️ Solo promover desde develop
     }
