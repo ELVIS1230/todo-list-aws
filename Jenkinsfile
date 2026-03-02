@@ -143,7 +143,7 @@ pipeline {
                     git checkout master
                     git pull origin master
                     git merge origin/develop
-                    git push origin/master
+                    git push 
                   '''
                 }
             // }
