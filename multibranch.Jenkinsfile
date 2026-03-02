@@ -184,6 +184,27 @@ pipeline {
                  junit 'result_unit.xml'
             }
         }
+
+        stage('API Tests (pytest) - Read Only') {
+          when {
+        branch 'master'   // ⚠️ Solo promover desde develop
+    }
+            environment {
+                BASE_URL = "${env.BASE_URL}"
+            }
+            steps{
+                sh '''
+                    python3 -m venv .venv
+                    . .venv/bin/activate
+                    
+                    pip install pytest requests
+
+                    # Solo ejecuta pruebas de lectura (sin modificar datos en producción)
+                    pytest -v test/integration/todoApiReadOnlyTest.py --junitxml=result_unit.xml
+                '''
+                 junit 'result_unit.xml'
+            }
+        }
         
         stage('********PROMOTE (MERGE MASTER)*******') {
     when {
