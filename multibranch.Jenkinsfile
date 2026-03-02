@@ -139,7 +139,18 @@ pipeline {
                                     sam validate --region $REGION
 
                                     echo "===== SAM Deploy ====="
-                        sam deploy --config-env staging --no-fail-on-empty-changeset
+                         if [ "$BRANCH_NAME" = "master" ]; then
+                    ENVIRONMENT="production"
+                else
+                    ENVIRONMENT="staging"
+                fi
+
+                echo "Deploying to environment: $ENVIRONMENT"
+
+                echo "===== SAM Deploy ====="
+                sam deploy \
+                    --config-env $ENVIRONMENT \
+                    --no-fail-on-empty-changeset
         '''
         
         env.BASE_URL = sh(
